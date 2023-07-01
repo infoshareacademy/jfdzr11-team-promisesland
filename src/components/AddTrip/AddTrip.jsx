@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { parseTags } from '../../utils/validators';
 import useAuth from '../../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
+import { Popup } from 'reactjs-popup';
 
 const AddTrip = () => {
 	const tripsCollectionRef = collection(db, 'Trips');
@@ -68,87 +69,171 @@ const AddTrip = () => {
 		}
 	};
 
+	const handleCancel = () => {
+		navigate('/');
+	};
+
 	return (
 		<>
-			<h4>Dane podstawowe</h4>
+			<h4 className={styles.add_trip_header}>Dane podróży</h4>
 			<div className={styles.container}>
 				<form className={styles.form} onSubmit={handleSubmit}>
-					<label htmlFor='title'>Dodaj tytuł podróży</label>
-					<span> (max. 200 znaków)</span>
-					<input
-						type='text'
-						name='title'
-						id='title'
-						placeholder='np. Wakacje 2023'
-						maxLength='200'
-						required
-					/>
-					<legend>Dodaj opis swojej podróży</legend>
-					<span> (max. 1500 znaków)</span>
-					<textarea
-						type='text'
-						name='info'
-						id='info'
-						placeholder='Opisz tutaj swój plan na podróż'
-						maxLength='1500'
-						required
-					></textarea>
-					<div className={styles.data}>
-						<legend>Data</legend>
-						<label htmlFor='startDate'>Wylot</label>
-						<input type='date' name='startDate' id='startDate' required />
-						<label htmlFor='endDate'>Powrót</label>
-						<input type='date' name='endDate' id='endDate' required />
-					</div>
-					<div className={styles.places}>
-						<legend>Miejsce docelowe</legend>
-						<label htmlFor='startPlace'>Początek podróży</label>
+					<div className={styles.title_container}>
+						<label htmlFor='title' className={styles.labels}>
+							Dodaj tytuł podróży
+						</label>
+						<br />
+						<span className={styles.small_notes}> (max. 200 znaków)</span>
 						<input
+							className={styles.input_add_trip}
 							type='text'
-							name='startPlace'
-							id='startPlace'
-							placeholder='Z'
-							required
-						/>
-						<label htmlFor='endPlace'>Miejsce docelowe</label>
-						<input
-							type='text'
-							name='endPlace'
-							id='endPlace'
-							placeholder='Do'
+							name='title'
+							id='title'
+							placeholder='np. Wakacje 2023'
+							maxLength='200'
 							required
 						/>
 					</div>
-					<label htmlFor='maxParticipantsCount'>Podaj ilość uczestników</label>
-					<input
-						type='number'
-						name='maxParticipantsCount'
-						id='maxParticipantsCount'
-						placeholder='Podaj liczbę'
-						required
-					/>
+					<div className={styles.describtion_container}>
+						<legend className={styles.labels}>Dodaj opis swojej podróży</legend>
+						<span className={styles.small_notes}> (max. 1500 znaków)</span>
+						<textarea
+							type='text'
+							name='info'
+							id='info'
+							placeholder='Opisz tutaj swój plan na podróż'
+							maxLength='1500'
+							required
+						></textarea>
+					</div>
+					<div className={styles.dates_container}>
+						<legend className={styles.labels}>Data</legend>
 
-					<legend>Budżet</legend>
-					<label htmlFor='budget'>Podaj szacowany koszt podróży per uczestnik</label>
-					<input
-						type='number'
-						name='budget'
-						id='budget'
-						placeholder='Podaj koszt'
-						required
-					/>
+						<div className={styles.dates}>
+							<label htmlFor='startDate' className={styles.small_notes}>
+								Wylot
+							</label>
+							<input
+								className={styles.input_add_trip}
+								type='date'
+								name='startDate'
+								id='startDate'
+								required
+							/>
 
-					<legend>Tagi</legend>
-					<textarea
-						type='text'
-						name='tags'
-						id='tags'
-						placeholder='Dodaj tagi określające typ podróży'
-						required
-					></textarea>
+							<label htmlFor='endDate' className={styles.small_notes}>
+								Powrót
+							</label>
+							<input
+								className={styles.input_add_trip}
+								type='date'
+								name='endDate'
+								id='endDate'
+								required
+							/>
+						</div>
+					</div>
 
-					<div className={styles.btn}>
-						<button>Dodaj podróż</button>
+					<div className={styles.places_container}>
+						<legend className={styles.labels}>Miejsce docelowe</legend>
+						<div className={styles.places}>
+							<input
+								className={styles.input_add_trip}
+								type='text'
+								name='startPlace'
+								id='startPlace'
+								placeholder='Z'
+								required
+							/>
+
+							<input
+								className={styles.input_add_trip}
+								type='text'
+								name='endPlace'
+								id='endPlace'
+								placeholder='Do'
+								required
+							/>
+						</div>
+					</div>
+					<div className={styles.participants_container}>
+						<label htmlFor='maxParticipantsCount' className={styles.labels}>
+							Podaj ilość uczestników
+						</label>
+						<input
+							className={styles.input_add_trip}
+							type='number'
+							name='maxParticipantsCount'
+							id='maxParticipantsCount'
+							placeholder='Podaj liczbę'
+							required
+						/>
+					</div>
+					<div className={styles.budget_container}>
+						<legend className={styles.labels}>Budżet</legend>
+						<label htmlFor='budget' className={styles.small_notes}>
+							Podaj szacowany koszt podróży per uczestnik
+						</label>
+						<input
+							className={styles.input_add_trip}
+							type='number'
+							name='budget'
+							id='budget'
+							placeholder='Podaj koszt'
+							required
+						/>
+					</div>
+					<div className={styles.tags_container}>
+						<legend className={styles.labels}>Tagi</legend>
+						<textarea
+							type='text'
+							name='tags'
+							id='tags'
+							placeholder='Dodaj tagi określające typ podróży'
+							required
+						></textarea>
+					</div>
+					<div className={styles.buttons_form}>
+						<button className={styles.button_add}>Dodaj</button>
+
+						<Popup
+							trigger={<button className={styles.button_cancel}> Cofnij </button>}
+							modal
+							nested
+						>
+							{(close) => (
+								<div className={styles.modal}>
+									<button className={styles.close_sign} onClick={close}>
+										&times;
+									</button>
+									<div className={styles.modal_header}>
+										Czy na pewno chcesz anulować tworzenie podróży? <br />
+									</div>
+									<div className={styles.modal_content}>
+										Spowoduje to usunięcie wszystkich wprowadzonych danych.
+									</div>
+									<div className={styles.actions_container}>
+										<button
+											className={styles.button_actions}
+											onClick={() => {
+												close();
+											}}
+										>
+											Powrót
+										</button>
+										<button
+											className={styles.button_actions}
+											onClick={() => {
+												handleCancel();
+												close();
+											}}
+										>
+											Potwierdź
+										</button>
+									</div>
+								</div>
+							)}
+						</Popup>
 					</div>
 				</form>
 			</div>

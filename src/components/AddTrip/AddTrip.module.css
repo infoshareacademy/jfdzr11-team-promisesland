@@ -4,16 +4,14 @@
 	display: grid;
 	justify-content: center;
 	align-items: center;
-    overflow: scroll;
+	overflow: scroll;
 }
 
 .form {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	gap: 5px;
-	width: 270px;
-    height: 800px;
+	width: 320px;
+	height: 800px;
 }
 
 textarea {
@@ -27,27 +25,136 @@ textarea {
 	resize: none;
 }
 
-.btn {
+.input_add_trip {
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	font-family: var(--font-family);
+	box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+	width: 100%;
+	text-indent: 3px;
+}
+
+.small_notes {
+	font-size: var(--fs-small-text);
+	margin: 3px;
+}
+
+.buttons_form {
 	display: flex;
 	justify-content: center;
 	gap: 10px;
+	margin: 10px;
 }
 
-.data {
+.dates {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: center;
 	gap: 5px;
 }
 
 .places {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: center;
 	gap: 5px;
 }
 
-h4 {
-    text-align: center;
-    margin: 0;
+.labels {
+	font-size: var(--fs-p);
+	font-weight: bolder;
 }
+
+.add_trip_header {
+	text-align: center;
+	margin: 10px;
+}
+
+.modal {
+	font-size: 12px;
+	background-color: var(--clr-2);
+	width: 300px;
+}
+
+.modal_header {
+	text-align: center;
+	width: 100%;
+	padding: 10px 5px;
+	font-size: var(--fs-h4);
+}
+
+.modal_content {
+	text-align: center;
+	width: 100%;
+	padding: 10px 5px;
+}
+
+.close_sign {
+	cursor: pointer;
+	position: absolute;
+	display: block;
+	padding: 2px 5px;
+	line-height: 20px;
+	right: -10px;
+	top: -10px;
+	font-size: 24px;
+	background: #ffffff;
+	border-radius: 18px;
+	border: 1px solid #cfcece;
+}
+
+.actions_container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.button_actions {
+	display: inline;
+	background-color: var(--clr-main-dark);
+	color: var(--clr-0);
+	text-align: center;
+	transition: all 0.5s;
+	cursor: pointer;
+	margin: 10px;
+	height: 55px;
+	width: 180px;
+
+	border: none;
+	border-radius: 5px;
+	font-size: var(--fs-h3);
+	font-family: var(--font-family);
+	font-weight: var(--font-medium);
+}
+
+.button_cancel, .button_add {
+	background-color: var(--clr-4);
+	color: var(--clr-0);
+	height: 55px;
+	width: 180px;
+
+	border: none;
+	border-radius: 5px;
+
+	font-family: var(--font-family);
+	font-size: var(--fs-h3);
+	font-weight: var(--font-medium);
+	margin: 10px;
+}
+
+input[type=date]:required:invalid::-webkit-datetime-edit {
+    color: transparent;
+}
+input[type=date]:focus::-webkit-datetime-edit {
+    color: black !important;
+}
+
+.dates_container, .places_container, .participants_container, .budget_container, .tags_container, .describtion_container, .title_container {
+	border-style: solid;
+	padding: 10px;
+	box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	margin-top: 5px;
+}
+
