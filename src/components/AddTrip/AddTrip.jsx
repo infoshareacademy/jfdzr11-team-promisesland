@@ -98,6 +98,7 @@ const AddTrip = () => {
 						<legend className={styles.labels}>Dodaj opis swojej podróży</legend>
 						<span className={styles.small_notes}> (max. 1500 znaków)</span>
 						<textarea
+							className={styles.textarea_add_trip}
 							type='text'
 							name='info'
 							id='info'
@@ -186,6 +187,7 @@ const AddTrip = () => {
 					<div className={styles.tags_container}>
 						<legend className={styles.labels}>Tagi</legend>
 						<textarea
+							className={styles.textarea_add_trip}
 							type='text'
 							name='tags'
 							id='tags'
@@ -223,6 +225,7 @@ const AddTrip = () => {
 										</button>
 										<button
 											className={styles.button_actions}
+											type='button'
 											onClick={() => {
 												handleCancel();
 												close();
