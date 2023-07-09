@@ -2,6 +2,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	/* align-items: center; */
 	width: 100%;
 	height: 100%;
 	padding: 0.5em;
@@ -9,9 +10,30 @@
 
 .navLogo {
 	display: flex;
+	align-items: center;
 }
 
 img {
 	display: block;
 	height: 100%;
+}
+
+.name {
+	font-size: var(--fs-h1);
+	line-height: var(--fs-h1);
+}
+
+.logoutBtn {
+	background-color: transparent;
+	color: var(--clr-main-dark);
+	/* height: 35px; */
+	/* width: 125px; */
+
+	border: none;
+	/* border-radius: 5px; */
+
+	font-family: var(--font-family);
+	font-size: var(--fs-small-text);
+	line-height: var(--fs-h1);
+	/* font-weight: var(--font-medium); */
 }

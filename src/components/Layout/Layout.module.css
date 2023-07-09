@@ -3,7 +3,7 @@
 	height: 100%;
 
 	display: grid;
-	grid-template-rows: 50px 1fr 100px;
+	grid-template-rows: 40px 1fr 70px;
 	grid-template-areas:
 		'navbar'
 		'page_content'
@@ -12,7 +12,9 @@
 
 .navbar {
 	grid-area: navbar;
-	background-color: rgb(118, 219, 230);
+	background-color: var(--clr-main-light);
+	background-color: var(--clr-bg);
+	box-shadow: 0 3px 5px var(--clr-shadow);
 }
 
 .page_content {
@@ -21,5 +23,15 @@
 
 .footer {
 	grid-area: footer;
-	background-color: rgb(118, 219, 230);
+	position: sticky;
+	bottom: 0;
+	background-color: var(--clr-bg);
+	box-shadow: 0 -5px 10px var(--clr-shadow);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.titleBox {
+	display: flex;
 }

@@ -1,0 +1,15 @@
+.titleBox {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 50px;
+}
+
+.buttonBox {
+	display: flex;
+	justify-content: center;
+	height: var(--fs-h3);
+	width: var(--fs-h3);
+	border: none;
+	background-color: transparent;
+}
