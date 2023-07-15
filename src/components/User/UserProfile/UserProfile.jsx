@@ -125,11 +125,10 @@ const UserProfile = () => {
 									{user.city}
 								</div>
 							) : null}
-							<legend className={styles.legend}>O mnie</legend>
-							<div className={styles.user_about}>
-								{user.aboutMe}
+							<div className={styles.user_about_container}>
+								<legend className={styles.legend}>O mnie</legend>
+								<div className={styles.user_about}>{user.aboutMe}</div>
 							</div>
-						
 						</div>
 					</div>
 				</div>
