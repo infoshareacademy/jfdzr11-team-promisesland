@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styles from './EditUser.module.css';
-import BackButton from '../../BackButton/BackButton';
-import Popup from 'reactjs-popup';
 import useAuth from '../../../contexts/AuthContext';
 import { getUserData } from '../../../utils/getUserData';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../config/firebase';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { ModalPopup } from '../../../components';
+import iconBack from '/public/assets/icons/chevron-left-solid.svg';
 
 const EditUser = () => {
 	const { currentUser } = useAuth();
@@ -64,11 +64,28 @@ const EditUser = () => {
 		return `${year}-${month}-${day}`;
 	};
 
+	const handleCancelEditUserClick = () => {
+		navigate(-1);
+		toast.error('Twoje zmiany nie zostały zapisane');
+	};
+
 	return (
 		<>
 			{user ? (
 				<div className={styles.container}>
-					<BackButton sectionTitle={'Edycja profilu użytkownika'} />
+					<ModalPopup
+						triggerBtn={
+							<div className={styles.button_back_container}>
+								<button className={styles.button_back}>
+									<img src={iconBack} alt='Go back' />
+								</button>
+								<h3>Edycja profilu użytkownika</h3>
+							</div>
+						}
+						modalHeader='Czy na pewno chcesz anulować edycję profilu?'
+						modalAdditionalInfo='Spowoduje to usunięcie wszystkich wprowadzonych danych.'
+						handleConfirmCancelationClick={handleCancelEditUserClick}
+					/>
 					<div className={styles.form_container}>
 						<form
 							onSubmit={(e) => handleSaveUpdatedUserData(e)}
@@ -164,49 +181,16 @@ const EditUser = () => {
 								defaultValue={user.aboutMe}
 							></textarea>
 							<div className={styles.btn_container}>
-								<Popup
-									trigger={
+								<ModalPopup
+									triggerBtn={
 										<button type='button' className={styles.cancel_btn}>
 											Anuluj
 										</button>
 									}
-									modal
-									nested
-								>
-									{(close) => (
-										<div className={styles.overlay}>
-											<div className={styles.modal}>
-												<button className={styles.close_sign} onClick={close}>
-													&times;
-												</button>
-												<div className={styles.modal_header}>
-													Czy na pewno chcesz anulować edycję?
-												</div>
-												<p className={styles.modal_additional_info}>
-													Spowoduje to usunięcie wszystkich wprowadzonych danych.
-												</p>
-												<div className={styles.actions}>
-													<button
-														className={`${styles.actions_btn} + ${styles.actions_btn_cancel}`}
-														onClick={() => close()}
-													>
-														Powrót
-													</button>
-													<button
-														className={`${styles.actions_btn} + ${styles.actions_btn_confirm}`}
-														onClick={() => {
-															navigate('/userprofile');
-															toast.error('Twoje zmiany nie zostały zapisane');
-															close();
-														}}
-													>
-														Potwierdź
-													</button>
-												</div>
-											</div>
-										</div>
-									)}
-								</Popup>
+									modalHeader='Czy na pewno chcesz anulować edycję profilu?'
+									modalAdditionalInfo='Spowoduje to usunięcie wszystkich wprowadzonych danych.'
+									handleConfirmCancelationClick={handleCancelEditUserClick}
+								/>
 								<button type='submit' className={styles.save_btn}>
 									Zapisz
 								</button>

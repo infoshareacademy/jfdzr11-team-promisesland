@@ -7,6 +7,7 @@ import TripMini from '../../Trip/TripMini/TripMini';
 import { toast } from 'react-hot-toast';
 import { firebaseErrors } from '../../../utils/firebaseErrors';
 import { Link, useNavigate } from 'react-router-dom';
+import iconPlus from '/public/assets/icons/plus-solid.svg';
 
 const OwnedTrips = () => {
 	const { currentUser } = getAuth();
@@ -24,7 +25,12 @@ const OwnedTrips = () => {
 				id: doc.id,
 				...doc.data(),
 			}));
-			setOwnedTrips(ownedTripsData);
+
+			const ownedValidTripsData = ownedTripsData.filter(
+				(trip) => trip.endDate.toDate() > new Date()
+			);
+
+			setOwnedTrips(ownedValidTripsData);
 		} catch (error) {
 			toast.error('Wystąpił błąd: ' + firebaseErrors[error.code]);
 		}
@@ -52,6 +58,9 @@ const OwnedTrips = () => {
 				<Link to='/mytrips/joinedtrips' className={styles.myTripsLink}>
 					Dołączone
 				</Link>
+				<Link to='/mytrips/completedtrips' className={styles.myTripsLink}>
+					Zakończone
+				</Link>
 			</div>
 			<div className={styles.container}>
 				<div className={styles.create_container}>
@@ -61,8 +70,8 @@ const OwnedTrips = () => {
 							Dokąd chcesz się wybrać? :) <br />
 							Tapnij + aby dodać nową podróż.
 						</p>
-						<button onClick={handleClick} className={styles.create_btn}>
-							+
+						<button className={styles.create_btn} type='button' onClick={handleClick}>
+							<img src={iconPlus} />
 						</button>
 					</div>
 				</div>

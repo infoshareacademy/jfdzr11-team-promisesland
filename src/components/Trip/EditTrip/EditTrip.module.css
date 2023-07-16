@@ -1,0 +1,301 @@
+.icon_edit_trip {
+	height: 50px;
+	width: 50px;
+	display: flex;
+}
+
+.trip_photo {
+	width: 170px;
+	height: 190px;
+	border-radius: 4px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.trip_photo_empty {
+	width: 170px;
+	height: 190px;
+	border-radius: 4px;
+	border: 2px solid var(--clr-main-dark);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.add_photo_plus {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 24px;
+	height: 24px;
+	padding: 4px;
+	color: var(--clr-bg);
+	background-color: var(--clr-orange);
+	border-radius: 5px;
+	font-size: 20px;
+	font-weight: 500;
+	position: absolute;
+	transform: translate(1040%, -70%);
+	/* top: 36%;
+    right: 23%; */
+}
+
+.photo_container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.btn_container {
+	margin: 15px;
+	display: flex;
+	justify-content: space-between;
+	gap: 30px;
+}
+
+.cancel_btn,
+.save_btn {
+	padding: 4px 8px;
+	border-radius: 5px;
+	width: 135px;
+	height: 40px;
+	font-family: var(--font-family);
+	font-size: var(--fs-p);
+	cursor: pointer;
+}
+
+.cancel_btn {
+	border: 2px solid var(--clr-main-dark);
+	color: var(--clr-main-dark);
+	background-color: transparent;
+}
+
+.save_btn {
+	border: 2px solid var(--clr-main-dark);
+	color: var(--clr-bg);
+	background-color: var(--clr-main-dark);
+}
+
+.overlay {
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--clr-shadow-transparent);
+	backdrop-filter: blur(3px);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.modal {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 12px;
+	background-color: var(--clr-bg);
+	width: 90%;
+	max-width: 400px;
+	text-align: center;
+	padding: 15px;
+	border-radius: 5px;
+}
+
+.close_sign {
+	cursor: pointer;
+	position: absolute;
+	padding: 2px 5px;
+	line-height: 20px;
+	right: 1px;
+	top: 1px;
+	font-size: 30px;
+	color: var(--clr-main-dark);
+	border: none;
+	background-color: transparent;
+}
+
+.modal_header {
+	margin-top: 10px;
+	font-size: var(--fs-h4);
+}
+
+.modal_additional_info {
+	margin: 20px 0;
+}
+
+.actions {
+	display: flex;
+	justify-content: space-between;
+}
+
+.actions_btn {
+	text-align: center;
+	cursor: pointer;
+	height: 40px;
+	width: 100px;
+	border: none;
+	border-radius: 5px;
+	font-size: var(--fs-p);
+	font-family: var(--font-family);
+	font-weight: var(--font-medium);
+}
+
+.actions_btn_confirm {
+	border: 2px solid var(--clr-main-dark);
+	background-color: transparent;
+	color: var(--clr-main-dark);
+	cursor: pointer;
+}
+
+.actions_btn_cancel {
+	color: var(--clr-bg);
+	background-color: var(--clr-main-dark);
+}
+
+.container {
+	height: 100%;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	margin: 5px;
+}
+
+.form_container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	width: 350px;
+	/* height: 1000px; */
+}
+
+.trip_info_box {
+	padding: 10px;
+	border-radius: 8px;
+	margin-top: 10px;
+	background-color: var(--clr-main-light-transparent);
+}
+
+.title {
+	width: 100%;
+	border-bottom: 2px solid var(--clr-main-dark);
+	border-top: none;
+	border-right: none;
+	border-left: none;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding: 5px;
+	margin-top: 5px;
+	font-family: var(--font-family);
+	font-size: var(--fs-label);
+	margin-bottom: 5px;
+}
+
+.textarea_add_trip {
+	width: 100%;
+	height: 150px;
+	padding: 10px;
+	box-sizing: border-box;
+	border: none;
+	border-radius: 4px;
+	background-color: var(--clr-0);
+	resize: none;
+	font-family: var(--font-family);
+	margin-top: 10px;
+	font-size: var(--fs-label);
+	font-weight: var(--font-medium);
+}
+
+.countries_container,
+.dates_container,
+.participants_container,
+.budget_container,
+.tags_container,
+.participants_data_container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.countries_container:first-child {
+	margin-bottom: 10px;
+}
+
+.places,
+.dates {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 5px;
+}
+
+.input_add_trip {
+	border: 2px solid var(--clr-2);
+	border: none;
+	border-radius: 5px;
+	font-family: var(--font-family);
+	font-size: var(--fs-label);
+	box-shadow: var(--shadowColor);
+	width: 100%;
+	padding: 5px;
+	text-indent: 3px;
+}
+
+.labels {
+	font-size: var(--fs-p);
+	font-weight: bolder;
+	margin-bottom: 5px;
+}
+
+.small_notes {
+	font-size: var(--fs-small-text);
+	margin: 3px;
+}
+
+.participants_border {
+	background-color: var(--clr-bg);
+	border-radius: 4px;
+	padding: 10px;
+}
+
+.participant {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	padding: 4px;
+}
+
+.remove_user_btn {
+	border: 2px solid var(--clr-dark-red);
+	color: var(--clr-dark-red);
+	background-color: var(--clr-dark-red);
+	color: var(--clr-bg);
+	cursor: pointer;
+	padding: 4px 8px;
+	border-radius: 8px;
+	font-family: var(--font-family);
+	font-size: var(--fs-p);
+}
+
+.button_back_container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 50px;
+}
+
+.button_back {
+	display: flex;
+	justify-content: center;
+	height: var(--fs-h3);
+	width: var(--fs-h3);
+	border: none;
+	background-color: transparent;
+}

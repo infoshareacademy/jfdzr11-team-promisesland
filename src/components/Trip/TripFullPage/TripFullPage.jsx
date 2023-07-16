@@ -11,20 +11,29 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../config/firebase';
 import { toast } from 'react-hot-toast';
-import { Popup } from 'reactjs-popup';
 import useAuth from '../../../contexts/AuthContext';
 import BackButton from '../../BackButton/BackButton';
-// import { getTripDuration } from '../../../utils/getTripDuration';
+import { Link } from 'react-router-dom';
+import { ModalPopup } from '../../../components';
+import { getDownloadURL, getStorage, ref } from '@firebase/storage';
+import iconLocation from '/public/assets/icons/location-dot-main-light.svg';
+import iconCalendar from '/public/assets/icons/calendar-days-main-light.svg';
+import iconEdit from '/public/assets/icons/pen.png';
 
 const TripFullPage = () => {
 	const { tripID } = useParams();
 
+	const storage = getStorage();
 	const { currentUser } = useAuth();
 
 	const [trip, setTrip] = useState();
 	const [users, setUsers] = useState();
 	const [tripDuration, setTripDuration] = useState('');
+	const [tripImgURL, setTripImgURL] = useState();
 	const [participantsData, setParticipantsData] = useState();
+	const [participantsDataWithImg, setParticipantsDataWithImg] = useState([]);
+	const defaultImgURL =
+		'https://firebasestorage.googleapis.com/v0/b/promises-land.appspot.com/o/tripsPhoto%2Fdefault.png?alt=media&token=179f10ed-72cc-40a8-bef4-2a76ba77f98f';
 
 	const tripRef = doc(db, 'Trips', tripID);
 
@@ -62,11 +71,32 @@ const TripFullPage = () => {
 		}
 	};
 
-	const getParticipants = () => {
+	const getParticipantsData = async () => {
 		const participantsFilteredArray = users.filter((doc) => {
 			return trip?.participants.some((partID) => doc.id.includes(partID));
 		});
 		setParticipantsData(participantsFilteredArray);
+
+		const participantsWithImages = participantsFilteredArray.map(async (item) => {
+			const imageRef = ref(storage, `usersProfilePhoto/${item.id}.jpg`);
+			return await getDownloadURL(imageRef)
+				.then((url) => {
+					return {
+						imgURL: url,
+						...item,
+					};
+				})
+				.catch((error) => {
+					return {
+						imgURL:
+							'https://firebasestorage.googleapis.com/v0/b/promises-land.appspot.com/o/usersProfilePhoto%2Fdefault-user-image.svg?alt=media&token=51cfbe1c-fb80-4d7f-bc54-cd59b95361aa',
+						...item,
+					};
+				});
+		});
+		Promise.all(participantsWithImages).then((uuu) => {
+			setParticipantsDataWithImg(uuu);
+		});
 	};
 
 	const getTripDuration = () => {
@@ -101,6 +131,20 @@ const TripFullPage = () => {
 		setTripDuration(tripDurationText);
 	};
 
+	const getTripImage = async () => {
+		const imgPathReference = ref(storage, `tripsPhoto/${tripID}.jpg`);
+		getDownloadURL(imgPathReference)
+			.then((url) => {
+				setTripImgURL(url);
+			})
+			.catch((error) => {
+				// if (error.code !== 'storage/object-not-found') {
+				// 	// setTripImgURL()
+				console.log(error.message);
+				// }
+			});
+	};
+
 	const handleAddToTrip = async () => {
 		try {
 			const participantsIdArray = [...trip.participants];
@@ -123,15 +167,29 @@ const TripFullPage = () => {
 		}
 	};
 
+	const handleLeaveTrip = async () => {
+		try {
+			const participantsIdArray = [...trip.participants];
+			const participantsIdArrayUpdated = participantsIdArray.filter(
+				(participant) => participant !== currentUser.uid
+			);
+			await updateDoc(tripRef, { participants: participantsIdArrayUpdated });
+			toast.success('Opuszczono podróż');
+			navigate('/mytrips/joinedtrips');
+		} catch (error) {
+			toast.error('Błąd serwera');
+		}
+	};
+
 	useEffect(() => {
 		getUsers();
 	}, []);
 
 	useEffect(() => {
 		if (users && trip) {
-			getParticipants();
+			getParticipantsData();
 			getTripDuration();
-			// getTripDuration(trip, setTripDuration);
+			getTripImage();
 		}
 	}, [users, trip]);
 
@@ -139,48 +197,33 @@ const TripFullPage = () => {
 		<>
 			{participantsData ? (
 				<div className={styles.container}>
-					<BackButton sectionTitle={'Podróże'} />
+					<div className={styles.header_container}>
+						<BackButton sectionTitle={'Podróże'} />
+
+						{trip.owner === currentUser.uid ? (
+							<div className={styles.edit_trip_container}>
+								<button className={styles.edit_trip_btn}>
+									<Link
+										to={`/trip/${tripID}/edittrip`}
+										className={styles.link_edit_trip}
+									>
+										<img src={iconEdit} className={styles.icon_edit_trip} />
+									</Link>
+								</button>
+							</div>
+						) : null}
+					</div>
 
 					{/* Przyciski Dołącz do podróży oraz Usuń podróż wraz z logiką */}
 					{trip.owner === currentUser.uid ? (
-						<Popup
-							trigger={<button className={styles.deleteTripBtn}> Usuń podróż </button>}
-							modal
-							nested
-						>
-							{(close) => (
-								<div className={styles.overlay}>
-									<div className={styles.modal}>
-										<button className={styles.close_sign} onClick={close}>
-											&times;
-										</button>
-										<div className={styles.modal_header}>
-											Czy na pewno chcesz usunąć tę podróż?
-										</div>
-										<p className={styles.modal_additional_info}>
-											Spowoduje to trwałe usunięcie podróży.
-										</p>
-										<div className={styles.actions}>
-											<button
-												className={`${styles.actions_btn} + ${styles.actions_btn_cancel}`}
-												onClick={() => close()}
-											>
-												Powrót
-											</button>
-											<button
-												className={`${styles.actions_btn} + ${styles.actions_btn_confirm}`}
-												onClick={() => {
-													handleDeleteTripClick();
-													close();
-												}}
-											>
-												Potwierdź
-											</button>
-										</div>
-									</div>
-								</div>
-							)}
-						</Popup>
+						<ModalPopup
+							triggerBtn={
+								<button className={styles.deleteTripBtn}> Usuń podróż </button>
+							}
+							modalHeader='Czy na pewno chcesz usunąć tę podróż?'
+							modalAdditionalInfo='Spowoduje to trwałe usunięcie podróży.'
+							handleConfirmCancelationClick={handleDeleteTripClick}
+						/>
 					) : !participantsData.some((item) => item.id === currentUser.uid) ? (
 						participantsData &&
 						participantsData.length < trip.maxParticipantsCount ? (
@@ -192,26 +235,48 @@ const TripFullPage = () => {
 								Dołącz do podróży
 							</button>
 						)
+					) : participantsData.some((item) => item.id === currentUser.uid) ? (
+						participantsData && trip.endDate.toDate() > new Date() ? (
+							<ModalPopup
+								triggerBtn={
+									<button className={styles.leaveTripBtn}>Opuść podróż</button>
+								}
+								modalHeader='Czy na pewno chcesz opuścić tę podróż?'
+								modalAdditionalInfo='Spowoduje to trwałe usunięcie Cię z podróży.'
+								handleConfirmCancelationClick={handleLeaveTrip}
+							/>
+						) : null
 					) : null}
 
 					{/* Informacje dotyczące podróży */}
 					<div className={styles.tripCard}>
-						<h4 className={styles.title}>{trip.title}</h4>
-						<div className={styles.oneLine}>
-							<img
-								className={styles.icon}
-								src='/src/assets/icons/location-dot-solid.svg'
-								alt=''
-							/>
-							<p>{trip.endPlace}</p>
-						</div>
-						<div className={styles.oneLine}>
-							<img
-								className={styles.icon}
-								src='/src/assets/icons/calendar-days-regular.svg'
-								alt=''
-							/>
-							<p>{tripDuration}</p>
+						<div className={styles.tripHeader}>
+							<div className={styles.tripHeaderImgBox}>
+								{tripImgURL ? (
+									<img
+										src={tripImgURL}
+										alt={`Zdjęcie podróży ${trip.title}`}
+										className={styles.tripHeaderImg}
+									/>
+								) : (
+									<img
+										src={defaultImgURL}
+										alt={`Przykładowe zdjęcie podrózy`}
+										className={styles.tripHeaderImg}
+									/>
+								)}
+							</div>
+							<div className={styles.tripHeaderInfo}>
+								<h4 className={styles.tripTitle}>{trip.title}</h4>
+								<div className={styles.oneLine}>
+									<img className={styles.icon} src={iconLocation} alt='' />
+									<p>{trip.toCountry}</p>
+								</div>
+								<div className={styles.oneLine}>
+									<img className={styles.icon} src={iconCalendar} alt='' />
+									<p>{tripDuration}</p>
+								</div>
+							</div>
 						</div>
 
 						<div className={styles.tagsBox}>
@@ -225,28 +290,57 @@ const TripFullPage = () => {
 						</div>
 
 						<div className={styles.box}>
+							<h4 className={styles.sectionTitle}>Skąd ruszamy</h4>
+							<p>
+								{trip.fromCity}, {trip.fromCountry}
+							</p>
+						</div>
+
+						<div className={styles.box}>
+							<h4 className={styles.sectionTitle}>Dokąd się wybieramy</h4>
+							<p>
+								{trip.toCity}, {trip.toCountry}
+							</p>
+						</div>
+
+						<div className={styles.box}>
 							<h4 className={styles.sectionTitle}>
 								<span>Uczestnicy</span>
 								<span>max. {trip.maxParticipantsCount}</span>
 							</h4>
-							{participantsData
-								? participantsData.map((participant) => {
-										if (participant.id === trip.owner) {
-											return (
-												<p key={participant.id} className={styles.owner}>
-													{participant.firstName} {participant.lastName} - Organizator
-												</p>
-											);
-										} else {
-											return (
-												<p key={participant.id} className={styles.participant}>
-													{participant.firstName} {participant.lastName}
-												</p>
-											);
-										}
-								  })
-								: null}
-							{/* {participantsData.length < trip.maxParticipantsCount ? <p>Wolne miejsca: </p> : null} */}
+							<ul className={styles.participantsList}>
+								{participantsDataWithImg
+									? participantsDataWithImg.map((participant) => {
+											if (participant.id === trip.owner) {
+												return (
+													<li key={participant.id} className={styles.owner}>
+														<img
+															src={participant.imgURL}
+															className={styles.ownerImg}
+															alt={`Awatar użytkownike ${participant.firstName} ${participant.lastName}`}
+														/>
+														<p>
+															{participant.firstName} {participant.lastName} - Organizator
+														</p>
+													</li>
+												);
+											} else {
+												return (
+													<li key={participant.id} className={styles.participant}>
+														<img
+															src={participant.imgURL}
+															className={styles.participantImg}
+															alt={`Awatar użytkownike ${participant.firstName} ${participant.lastName}`}
+														/>
+														<p>
+															{participant.firstName} {participant.lastName}
+														</p>
+													</li>
+												);
+											}
+									  })
+									: null}
+							</ul>
 						</div>
 
 						<div className={styles.box}>
@@ -256,7 +350,7 @@ const TripFullPage = () => {
 
 						<div className={styles.box}>
 							<h4 className={styles.sectionTitle}>Budżet</h4>
-							<p>{trip.budget},00 zł</p>
+							<p>{trip.budget} zł/os.</p>
 						</div>
 					</div>
 				</div>

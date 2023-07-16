@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import styles from './TripMini.module.css';
-import { getUserData } from '../../../utils/getUserData';
 import { Link } from 'react-router-dom';
 import useAuth from '../../../contexts/AuthContext';
-import { getTripDuration } from '../../../utils/getTripDuration';
+import { getDownloadURL, getStorage, ref } from '@firebase/storage';
+import iconLocationDark from '/public/assets/icons/location-dot-solid.svg';
+import iconLocationGrey from '/public/assets/icons/location-dot-grey.svg';
+import iconCalendarDark from '/public/assets/icons/calendar-days-regular.svg';
+import iconCalendarGrey from '/public/assets/icons/calendar-days-grey.svg';
+import iconGroupDark from '/public/assets/icons/people-group-solid.svg';
+import iconGroupGrey from '/public/assets/icons/people-group-grey.svg';
 
 const TripMini = ({
 	id,
 	title,
 	startDate,
 	endDate,
-	endPlace,
+	toCountry,
 	owner,
 	maxParticipantsCount,
-	participants,
 	filterOwnership,
 }) => {
 	// const [tripOwner, setTripOwner] = useState();
-	const [tripDuration, setTripDuration] = useState('');
 	const { currentUser } = useAuth();
+	const storage = getStorage();
+	const [tripImgURL, setTripImgURL] = useState();
+	const [tripDuration, setTripDuration] = useState('');
+	const defaultImgURL =
+		'https://firebasestorage.googleapis.com/v0/b/promises-land.appspot.com/o/tripsPhoto%2Fdefault.png?alt=media&token=179f10ed-72cc-40a8-bef4-2a76ba77f98f';
+	let iconLocation = iconLocationDark;
+	let iconCalendar = iconCalendarDark;
+	let iconGroup = iconGroupDark;
 
 	const getTripDuration = () => {
 		let tripDurationText = '';
@@ -52,8 +63,28 @@ const TripMini = ({
 		setTripDuration(tripDurationText);
 	};
 
+	const getTripImage = async () => {
+		const imgPathReference = ref(storage, `tripsPhoto/${id}.jpg`);
+		getDownloadURL(imgPathReference)
+			.then((url) => {
+				setTripImgURL(url);
+			})
+			.catch((error) => {
+				// if (error.code !== 'storage/object-not-found') {
+				// 	// setTripImgURL()
+				console.log(error.message);
+				// }
+			});
+	};
+
+	if (filterOwnership === true && owner === currentUser.uid) {
+		iconLocation = iconLocationGrey;
+		iconCalendar = iconCalendarGrey;
+		iconGroup = iconGroupGrey;
+	}
+
 	useEffect(() => {
-		// getUserData(owner, setTripOwner);
+		getTripImage();
 		getTripDuration();
 	}, []);
 
@@ -68,47 +99,33 @@ const TripMini = ({
 							: styles.tripLink
 					}
 				>
+					<div className={styles.tripImgBox}>
+						{tripImgURL ? (
+							<img
+								src={tripImgURL}
+								alt={`Zdjęcie podróży ${title}`}
+								className={styles.tripImg}
+							/>
+						) : (
+							<img
+								src={defaultImgURL}
+								alt={`Przykładowe zdjęcie podróży`}
+								className={styles.defaultTripImg}
+							/>
+						)}
+					</div>
 					<h4 className={styles.title}>{title}</h4>
 					<div className={styles.oneLine}>
-						<img
-							className={styles.icon}
-							src={
-								filterOwnership === true && owner === currentUser.uid
-									? '/src/assets/icons/location-dot-grey.svg'
-									: '/src/assets/icons/location-dot-solid.svg'
-							}
-							alt=''
-						/>
-						<p>{endPlace}</p>
+						<img className={styles.icon} src={iconLocation} alt='Kraj' />
+						<p>{toCountry}</p>
 					</div>
 					<div className={styles.oneLine}>
-						<img
-							className={styles.icon}
-							src={
-								filterOwnership === true && owner === currentUser.uid
-									? '/src/assets/icons/calendar-days-grey.svg'
-									: '/src/assets/icons/calendar-days-regular.svg'
-							}
-							alt=''
-						/>
+						<img className={styles.icon} src={iconCalendar} alt='' />
 						<p>{tripDuration}</p>
 					</div>
-					{/* {tripOwner ? (
-						<p>
-							Owner: {tripOwner.firstName} {tripOwner.lastName}
-						</p>
-					) : null} */}
 					<div className={styles.oneLine}>
-						<img
-							className={styles.icon}
-							src={
-								filterOwnership === true && owner === currentUser.uid
-									? '/src/assets/icons/people-group-grey.svg'
-									: '/src/assets/icons/people-group-solid.svg'
-							}
-							alt=''
-						/>
-						<p>max. {maxParticipantsCount ? maxParticipantsCount : '0'} osób</p>
+						<img className={styles.icon} src={iconGroup} alt='' />
+						<p>{maxParticipantsCount ? maxParticipantsCount : '0'} podróżników</p>
 					</div>
 				</Link>
 			</li>
